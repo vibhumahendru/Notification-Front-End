@@ -1,8 +1,6 @@
-// src/App.js
 
 import React, { Component } from 'react';
 import './App.css';
-// import ConversationsList from './components/ConversationsList';
 import { API_WS_ROOT } from './constants';
 import { API_ROOT } from './constants';
 import { HEADERS } from './constants';
@@ -14,14 +12,14 @@ class App extends Component {
   state = {
     notifications: [],
     message:'',
-    category: "Notification",
+    category: "Notification", // type of notification to be created
     reminders:[],
     assignedTasks: [],
     generalNotifications: [],
-    selectedCategory: "notifications"
-
+    viewCategory: "notifications" // default category type to display notifications on dashboard
   };
 
+// when component mounts, it fetches all previous notifications and saves them in state
   componentDidMount = () => {
     fetch(`${API_ROOT}/notifications`)
       .then(res => res.json())
@@ -33,26 +31,23 @@ class App extends Component {
       })
   };
 
+// this function is triggered when new notification is recieved from server
   handleReceivedConversation = response => {
-
       this.setState({
         notifications: [...this.state.notifications, response.notification]
       })
       this.handleUnique()
     };
 
-    handleMessageInput=(event)=>{
-      this.setState({
-        message: event.target.value
-      })
-    }
-
+// this function selects the type of notification to be created
     handleCategorySelect=(event)=>{
       this.setState({
         category: event.target.value
       })
     }
 
+// this function creates a new notification instance in the DB. After creation
+// DB broadcasts the message back to front-end through channel.
     handleSubmit = e => {
     // e.preventDefault()
     fetch(`${API_ROOT}/notifications`, {
@@ -66,6 +61,9 @@ class App extends Component {
     this.setState({ message: '' });
   };
 
+// I faced a glitch in the backend. When an instance of a notification
+// was created, it would sometimes be broadcasted back through the channel more than one time.
+// This function removes any duplicate notifications.
   handleUnique=()=>{
     const uniqueNotifications = [];
 const map = new Map();
@@ -92,6 +90,7 @@ for (const item of this.state.notifications) {
 return uniqueNotifications
   }
 
+// gets date into desired format
   handleDate=()=>{
     let newDate = new Date()
 // let date = newDate.getDate();
@@ -104,9 +103,10 @@ let dateAr = date.split(" ")
 return dateAr[0] + " " + dateAr[1] + " " + dateAr[2]+", " + dateAr[3]
   }
 
-  handleSelectCategory=(category)=>{
+// this function selects the type of notification the user wants to see on the dashboard
+  handleSelectViewCategory=(category)=>{
     this.setState({
-      selectedCategory: category
+      viewCategory: category
     })
   }
 
@@ -133,18 +133,18 @@ return dateAr[0] + " " + dateAr[1] + " " + dateAr[2]+", " + dateAr[3]
           <p id="date-text">{this.handleDate()}</p>
           </div>
           <div className="counter-display">
-            <text className="notif-number">{this.state.assignedTasks.length}</text>  <text onClick={(category)=>this.handleSelectCategory("assignedTasks")}>Assigned Tasks</text><br></br>
-            <text className="notif-number">{this.state.reminders.length}</text>  <text onClick={(category)=>this.handleSelectCategory("reminders")}>Reminders</text><br></br>
-            <text className="notif-number">{this.state.generalNotifications.length}</text>  <text onClick={(category)=>this.handleSelectCategory("notifications")}>Notifications</text>
+            <text className="notif-number">{this.state.assignedTasks.length}</text>  <text onClick={(category)=>this.handleSelectViewCategory("assignedTasks")}>Assigned Tasks</text><br></br>
+            <text className="notif-number">{this.state.reminders.length}</text>  <text onClick={(category)=>this.handleSelectViewCategory("reminders")}>Reminders</text><br></br>
+            <text className="notif-number">{this.state.generalNotifications.length}</text>  <text onClick={(category)=>this.handleSelectViewCategory("notifications")}>Notifications</text>
             <br></br>
             <br></br>
             <text className="workspace">My Workspace{`>`}</text>
           </div>
 
           <div id="notification-info-column">
-          {this.state.selectedCategory == "notifications"? this.state.generalNotifications.slice(this.state.generalNotifications.length -10, this.state.generalNotifications.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
-          {this.state.selectedCategory == "reminders"? this.state.reminders.slice(this.state.reminders.length -10, this.state.reminders.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
-          {this.state.selectedCategory == "assignedTasks"? this.state.assignedTasks.slice(this.state.assignedTasks.length -10, this.state.assignedTasks.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
+          {this.state.viewCategory == "notifications"? this.state.generalNotifications.slice(this.state.generalNotifications.length -10, this.state.generalNotifications.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
+          {this.state.viewCategory == "reminders"? this.state.reminders.slice(this.state.reminders.length -10, this.state.reminders.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
+          {this.state.viewCategory == "assignedTasks"? this.state.assignedTasks.slice(this.state.assignedTasks.length -10, this.state.assignedTasks.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
 
           </div>
         </div>
