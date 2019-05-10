@@ -4,13 +4,7 @@ import Moment from 'react-moment';
 
 class Notification extends Component {
 
-  handleJustNow=()=>{
-    let x = <Moment fromNow>{this.props.notification.created_at}</Moment>
-    return x
-  }
-
   render() {
-    // console.log(this.handleJustNow());
     return (
       <div className="notification-display">
         <text id="cross">X</text>
