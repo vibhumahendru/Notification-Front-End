@@ -17,7 +17,8 @@ class App extends Component {
     category: "Notification",
     reminders:[],
     assignedTasks: [],
-    generalNotifications: []
+    generalNotifications: [],
+    selectedCategory: "notifications"
 
   };
 
@@ -103,9 +104,16 @@ let dateAr = date.split(" ")
 return dateAr[0] + " " + dateAr[1] + " " + dateAr[2]+", " + dateAr[3]
   }
 
+  handleSelectCategory=(category)=>{
+    this.setState({
+      selectedCategory: category
+    })
+  }
+
+
 
   render() {
-    console.log(this.handleDate());
+    console.log(this.state.reminders);
     return (
 
       <div className="main-container">
@@ -125,16 +133,19 @@ return dateAr[0] + " " + dateAr[1] + " " + dateAr[2]+", " + dateAr[3]
           <p id="date-text">{this.handleDate()}</p>
           </div>
           <div className="counter-display">
-            <text className="notif-number">{this.state.assignedTasks.length}</text>  <text>Assigned Tasks</text><br></br>
-            <text className="notif-number">{this.state.reminders.length}</text>  <text>Reminders</text><br></br>
-            <text className="notif-number">{this.state.generalNotifications.length}</text>  <text>Notifications</text>
+            <text className="notif-number">{this.state.assignedTasks.length}</text>  <text onClick={(category)=>this.handleSelectCategory("assignedTasks")}>Assigned Tasks</text><br></br>
+            <text className="notif-number">{this.state.reminders.length}</text>  <text onClick={(category)=>this.handleSelectCategory("reminders")}>Reminders</text><br></br>
+            <text className="notif-number">{this.state.generalNotifications.length}</text>  <text onClick={(category)=>this.handleSelectCategory("notifications")}>Notifications</text>
             <br></br>
             <br></br>
             <text className="workspace">My Workspace{`>`}</text>
           </div>
 
           <div id="notification-info-column">
-            {this.state.notifications.slice(this.state.notifications.length -10, this.state.notifications.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> )}
+          {this.state.selectedCategory == "notifications"? this.state.generalNotifications.slice(this.state.generalNotifications.length -10, this.state.generalNotifications.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
+          {this.state.selectedCategory == "reminders"? this.state.reminders.slice(this.state.reminders.length -10, this.state.reminders.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
+          {this.state.selectedCategory == "assignedTasks"? this.state.assignedTasks.slice(this.state.assignedTasks.length -10, this.state.assignedTasks.length).reverse().map(eachNotification=> <Notification notification={eachNotification} /> ):null}
+
           </div>
         </div>
       </div>
