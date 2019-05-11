@@ -11,7 +11,6 @@ class App extends Component {
 
   state = {
     notifications: [],
-    message:'',
     category: "Notification", // type of notification to be created
     reminders:[],
     assignedTasks: [],
@@ -58,7 +57,6 @@ class App extends Component {
         message: "This is some sample text."
       })
     });
-    this.setState({ message: '' });
   };
 
 // I faced a glitch in the backend. When an instance of a notification
@@ -69,7 +67,7 @@ class App extends Component {
 const map = new Map();
 for (const item of this.state.notifications) {
     if(!map.has(item.id)){
-        map.set(item.id, true);    // set any value to Map
+        map.set(item.id, true);
         uniqueNotifications.push({
             id: item.id,
             category: item.category,
@@ -93,14 +91,9 @@ return uniqueNotifications
 // gets date into desired format
   handleDate=()=>{
     let newDate = new Date()
-// let date = newDate.getDate();
-// let month = newDate.getMonth() + 1;
-// let year = newDate.getFullYear();
-// let day = newDate.getDay()
-let date = newDate.toString()
-let dateAr = date.split(" ")
-
-return dateAr[0] + " " + dateAr[1] + " " + dateAr[2]+", " + dateAr[3]
+    let date = newDate.toString()
+    let dateAr = date.split(" ")
+    return dateAr[0] + " " + dateAr[1] + " " + dateAr[2]+", " + dateAr[3]
   }
 
 // this function selects the type of notification the user wants to see on the dashboard
